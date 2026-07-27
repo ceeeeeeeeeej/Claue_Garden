@@ -1,0 +1,672 @@
+/* ══════════════════════════════════════════════════════════
+   DIGITAL GIANT CHERRY TREE — STYLES
+   Reference: Minecraft-style giant purple cherry blossom tree
+   with twisted trunk, massive canopy, hanging drapes,
+   sunset sky, and galaxy ring overlay
+   ══════════════════════════════════════════════════════════ */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --pink-soft: #f9c9df;
+    --pink-mid: #e86db5;
+    --purple-deep: #6b10a8;
+    --purple-mid: #9b3fd4;
+    --purple-light: #c27de8;
+    --cosmic-dark: #0a0114;
+    --sunset-orange: #ff7a38;
+    --sunset-gold: #ffc347;
+    --gold: #f5c842;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--cosmic-dark);
+    font-family: 'Inter', sans-serif;
+}
+
+/* ═══════════════════════════════════════════
+   OPENING OVERLAY
+   ═══════════════════════════════════════════ */
+#opening-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at 50% 55%,
+            #250840 0%, #110224 45%, #050010 100%);
+    animation: ovlIn 1s ease both;
+}
+
+@keyframes ovlIn {
+    from {
+        opacity: 0
+    }
+
+    to {
+        opacity: 1
+    }
+}
+
+#opening-overlay.fade-out {
+    animation: ovlOut 1.3s ease both;
+    pointer-events: none;
+}
+
+@keyframes ovlOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(1.05);
+    }
+}
+
+/* Floating background petals */
+.overlay-bg-petals {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.bg-petal {
+    position: absolute;
+    font-size: clamp(1.2rem, 3vw, 2.2rem);
+    opacity: 0.12;
+    animation: bgPetalFloat calc(7s + var(--i) * 1.5s) ease-in-out infinite;
+    animation-delay: calc(var(--i) * -1.4s);
+}
+
+.bg-petal:nth-child(1) {
+    top: 8%;
+    left: 6%;
+}
+
+.bg-petal:nth-child(2) {
+    top: 12%;
+    right: 8%;
+}
+
+.bg-petal:nth-child(3) {
+    bottom: 18%;
+    left: 12%;
+}
+
+.bg-petal:nth-child(4) {
+    bottom: 12%;
+    right: 6%;
+}
+
+.bg-petal:nth-child(5) {
+    top: 45%;
+    left: 3%;
+}
+
+@keyframes bgPetalFloat {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    33% {
+        transform: translateY(-28px) rotate(15deg);
+    }
+
+    66% {
+        transform: translateY(12px) rotate(-10deg);
+    }
+}
+
+/* ── Message Box ── */
+#message-box {
+    position: relative;
+    max-width: 540px;
+    width: 90%;
+    padding: 56px 48px 48px;
+    background: linear-gradient(150deg,
+            rgba(70, 8, 110, 0.52) 0%,
+            rgba(18, 3, 38, 0.82) 100%);
+    border: 1px solid rgba(200, 100, 255, 0.3);
+    border-radius: 26px;
+    text-align: center;
+    backdrop-filter: blur(20px);
+    box-shadow:
+        0 0 70px rgba(160, 40, 220, 0.22),
+        0 0 140px rgba(80, 0, 180, 0.12),
+        inset 0 0 50px rgba(180, 80, 255, 0.05);
+    animation: boxIn 1.5s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
+}
+
+@keyframes boxIn {
+    from {
+        opacity: 0;
+        transform: translateY(36px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* outer glow ring */
+.box-glow-ring {
+    position: absolute;
+    inset: -2px;
+    border-radius: 27px;
+    background: transparent;
+    border: 1px solid transparent;
+    background-clip: padding-box;
+    pointer-events: none;
+    animation: ringPulse 4s ease-in-out infinite;
+    box-shadow: 0 0 30px rgba(180, 80, 255, 0.18), inset 0 0 20px rgba(255, 120, 200, 0.05);
+}
+
+@keyframes ringPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 30px rgba(180, 80, 255, 0.18);
+    }
+
+    50% {
+        box-shadow: 0 0 55px rgba(220, 80, 255, 0.32);
+    }
+}
+
+/* corner ornaments */
+.box-corner {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-color: rgba(200, 100, 255, 0.55);
+    border-style: solid;
+    border-width: 0;
+}
+
+.box-corner.tl {
+    top: 14px;
+    left: 14px;
+    border-top-width: 2px;
+    border-left-width: 2px;
+    border-radius: 6px 0 0 0;
+}
+
+.box-corner.tr {
+    top: 14px;
+    right: 14px;
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-radius: 0 6px 0 0;
+}
+
+.box-corner.bl {
+    bottom: 14px;
+    left: 14px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-radius: 0 0 0 6px;
+}
+
+.box-corner.br {
+    bottom: 14px;
+    right: 14px;
+    border-bottom-width: 2px;
+    border-right-width: 2px;
+    border-radius: 0 0 6px 0;
+}
+
+.lantern-icon {
+    font-size: 3.4rem;
+    display: block;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 0 18px rgba(255, 120, 200, 0.9));
+    animation: iconBob 3.5s ease-in-out infinite;
+}
+
+@keyframes iconBob {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(-6deg) scale(1);
+    }
+
+    50% {
+        transform: translateY(-12px) rotate(6deg) scale(1.05);
+    }
+}
+
+.greeting {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: rgba(220, 170, 255, 0.75);
+    font-size: 0.88rem;
+    letter-spacing: 0.07em;
+    margin-bottom: 10px;
+}
+
+.message-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: clamp(2rem, 5vw, 2.9rem);
+    background: linear-gradient(135deg, #f0c8ff 20%, #e880d0 60%, #c060ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 auto 22px;
+    width: 60%;
+}
+
+.divider span:not(.diamond) {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200, 100, 255, 0.45), transparent);
+}
+
+.diamond {
+    color: rgba(200, 130, 255, 0.7);
+    font-size: 0.75rem;
+}
+
+.message-body {
+    font-size: 1rem;
+    line-height: 2;
+    color: rgba(240, 215, 255, 0.85);
+    margin-bottom: 20px;
+}
+
+.message-body em {
+    font-style: italic;
+    color: #e08fff;
+    font-weight: 500;
+}
+
+.message-sub {
+    font-size: 0.9rem;
+    color: rgba(190, 150, 225, 0.70);
+    margin-bottom: 34px;
+    letter-spacing: 0.04em;
+}
+
+/* ── Enter Button ── */
+#enter-btn {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    padding: 14px 42px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.94rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: #fff;
+    background: linear-gradient(135deg, #9b3fd4 0%, #c2185b 100%);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow:
+        0 4px 28px rgba(160, 30, 200, 0.5),
+        0 0 0 1px rgba(220, 150, 255, 0.25);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-shimmer {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(105deg,
+            transparent 35%, rgba(255, 255, 255, 0.18) 50%, transparent 65%);
+    background-size: 200% 100%;
+    animation: shimmer 2.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+#enter-btn:hover {
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 8px 40px rgba(160, 30, 200, 0.6);
+}
+
+#enter-btn:active {
+    transform: translateY(-1px);
+}
+
+/* ═══════════════════════════════════════════
+   MAIN SCENE
+   ═══════════════════════════════════════════ */
+#scene {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    touch-action: none;
+}
+
+#scene.hidden {
+    display: none;
+}
+
+#sky-canvas,
+#tree-canvas,
+#petal-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+}
+
+#sky-canvas {
+    z-index: 1;
+}
+
+#tree-canvas {
+    z-index: 2;
+    cursor: grab;
+    touch-action: none;
+}
+
+#tree-canvas:active {
+    cursor: grabbing;
+}
+
+#petal-canvas {
+    z-index: 3;
+    pointer-events: none;
+}
+
+/* ── Controls Bar ── */
+#controls-bar {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    z-index: 20;
+    display: flex;
+    gap: 12px;
+}
+
+.ctrl-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(240, 220, 255, 0.9);
+    background: rgba(25, 8, 45, 0.62);
+    border: 1px solid rgba(210, 120, 255, 0.3);
+    border-radius: 30px;
+    backdrop-filter: blur(14px);
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 0 12px rgba(180, 80, 255, 0.1);
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.ctrl-btn:hover {
+    background: rgba(60, 20, 95, 0.82);
+    border-color: rgba(230, 150, 255, 0.6);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(160, 50, 220, 0.4);
+}
+
+.ctrl-btn:active {
+    transform: translateY(0);
+}
+
+.ctrl-btn .icon {
+    font-size: 1.1rem;
+}
+
+/* ── Mobile Responsive Overrides ── */
+@media (max-width: 600px) {
+    #message-box {
+        padding: 36px 24px 32px;
+        width: 92%;
+        border-radius: 20px;
+    }
+
+    .message-title {
+        font-size: 1.8rem;
+    }
+
+    .message-body {
+        font-size: 0.88rem;
+        line-height: 1.7;
+    }
+
+    #controls-bar {
+        top: 14px;
+        right: 14px;
+        gap: 6px;
+    }
+
+    .ctrl-btn {
+        padding: 7px 12px;
+        font-size: 0.75rem;
+    }
+
+    .ctrl-btn .icon {
+        font-size: 0.9rem;
+    }
+
+    #dialogue-box {
+        padding: 12px 16px;
+    }
+
+
+    #dialogue-text {
+        font-size: 0.88rem;
+    }
+
+    #lyrics-box {
+        top: 60px;
+        padding: 10px 18px;
+    }
+
+    #lyrics-line {
+        font-size: 0.92rem;
+    }
+}
+
+/* ── Comforting Speech Bubble Dialogue Box ── */
+#dialogue-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -100%);
+    z-index: 35;
+    width: fit-content;
+    min-width: 120px;
+    max-width: min(360px, 86vw);
+    padding: 12px 18px;
+    background: rgba(26, 8, 44, 0.90);
+    border: 1px solid rgba(230, 150, 255, 0.45);
+    border-radius: 18px;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 14px rgba(220, 100, 255, 0.15);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    pointer-events: none;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+/* Speech Bubble Pointer Tail pointing to couple */
+#dialogue-box::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: var(--arrow-left, 50%);
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-top: 10px solid rgba(26, 8, 44, 0.90);
+}
+
+#dialogue-box.hidden {
+    opacity: 0;
+    transform: translate(-50%, calc(-100% + 15px));
+}
+
+#dialogue-speaker {
+    font-size: 0.76rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--pink-soft);
+    margin-bottom: 3px;
+}
+
+#dialogue-text {
+    font-size: 0.90rem;
+    line-height: 1.45;
+    color: #ffffff;
+    font-weight: 400;
+}
+
+
+/* ── Floating Synchronized Lyrics Box ── */
+#lyrics-box {
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 30;
+    width: fit-content;
+    min-width: 180px;
+    max-width: min(550px, 92vw);
+    padding: 12px 24px;
+    background: rgba(15, 3, 26, 0.78);
+    border: 1px solid rgba(255, 160, 220, 0.35);
+    border-radius: 40px;
+    backdrop-filter: blur(14px);
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(220, 100, 255, 0.15);
+    transition: all 0.5s ease;
+    pointer-events: none;
+}
+
+#lyrics-box.hidden {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-15px);
+}
+
+#lyrics-sub {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: rgba(255, 200, 240, 0.75);
+    margin-bottom: 4px;
+}
+
+#lyrics-line {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: #ffffff;
+    text-shadow: 0 0 12px rgba(255, 120, 200, 0.6);
+}
+
+/* ── Copyright Watermark ── */
+#watermark {
+    position: fixed;
+    bottom: 14px;
+    right: 18px;
+    z-index: 999;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(15, 3, 26, 0.65);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 180, 220, 0.3);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35), 0 0 12px rgba(244, 114, 182, 0.25);
+    pointer-events: none;
+    user-select: none;
+}
+
+/* ── Sky Theme Dropdown Select ── */
+.select-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.select-icon {
+    position: absolute;
+    left: 12px;
+    pointer-events: none;
+    font-size: 1.1rem;
+    z-index: 2;
+}
+
+.ctrl-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: rgba(20, 5, 30, 0.72);
+    color: #ffffff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    padding: 9px 36px 9px 38px;
+    border: 1px solid rgba(255, 180, 220, 0.35);
+    border-radius: 24px;
+    backdrop-filter: blur(12px);
+    cursor: pointer;
+    outline: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 12px rgba(244, 114, 182, 0.2);
+    transition: all 0.3s ease;
+}
+
+.ctrl-select:hover {
+    background: rgba(40, 10, 55, 0.85);
+    border-color: rgba(255, 200, 240, 0.6);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 18px rgba(244, 114, 182, 0.4);
+}
+
+.ctrl-select option {
+    background: #180924;
+    color: #ffffff;
+    padding: 8px;
+}
+
+

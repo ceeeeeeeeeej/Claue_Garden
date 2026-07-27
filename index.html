@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Digital Giant Cherry Tree</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <!-- ══════════════ OPENING MESSAGE OVERLAY ══════════════ -->
+    <div id="opening-overlay">
+        <div class="overlay-bg-petals">
+            <span class="bg-petal" style="--i:0">🌸</span>
+            <span class="bg-petal" style="--i:1">🌸</span>
+            <span class="bg-petal" style="--i:2">🌸</span>
+            <span class="bg-petal" style="--i:3">🌸</span>
+            <span class="bg-petal" style="--i:4">🌸</span>
+        </div>
+        <div id="message-box">
+            <div class="box-glow-ring"></div>
+            <div class="box-corner tl"></div>
+            <div class="box-corner tr"></div>
+            <div class="box-corner bl"></div>
+            <div class="box-corner br"></div>
+
+            <div class="lantern-icon">🌸</div>
+            <p class="greeting">For someone who worked hard today…</p>
+
+            <h1 class="message-title">You Did Well</h1>
+
+            <div class="divider">
+                <span></span>
+                <span class="diamond">✦</span>
+                <span></span>
+            </div>
+
+            <p class="message-body">
+                I know school can be really exhausting,<br />
+                and you've probably had a long day.<br /><br />
+
+                So don't forget to take a break,<br />
+                get some good rest, and be kind to yourself.<br /><br />
+
+                <em>i have a surprise for you,turn up the volume</em>
+            </p>
+            <button id="enter-btn">
+                <span class="btn-shimmer"></span>
+                Enter
+            </button>
+        </div>
+    </div>
+
+    <!-- ══════════════ MAIN SCENE ══════════════ -->
+    <div id="scene" class="hidden">
+        <canvas id="sky-canvas"></canvas>
+        <canvas id="tree-canvas"></canvas>
+        <canvas id="petal-canvas"></canvas>
+
+        <!-- Controls Floating UI Bar -->
+        <div id="controls-bar">
+            <input type="file" id="music-input" accept="audio/*" style="display:none" />
+            <div class="select-wrapper">
+                <span class="select-icon">🌆</span>
+                <select id="sky-select" class="ctrl-select" title="Select Sky Atmosphere Theme">
+                </select>
+            </div>
+        </div>
+
+        <!-- Comforting Dialogue Bubble Container -->
+        <div id="dialogue-box" class="hidden">
+            <div id="dialogue-speaker">Her</div>
+            <div id="dialogue-text">...</div>
+        </div>
+
+        <!-- Floating Synchronized Lyrics Container -->
+        <div id="lyrics-box" class="hidden">
+            <div id="lyrics-sub">🎵 Playing Song...</div>
+            <div id="lyrics-line">...</div>
+        </div>
+
+        <audio id="bg-music" src="music.mp3" preload="auto"></audio>
+    </div>
+
+
+
+
+    <script src="java.js"></script>
+</body>
+
+
+</html>
