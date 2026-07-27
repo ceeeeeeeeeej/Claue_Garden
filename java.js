@@ -26,7 +26,7 @@ const tCtx = tCanvas.getContext('2d');
 const pCtx = pCanvas.getContext('2d');
 
 const skySelect = document.getElementById('sky-select');
-const selectIcon = document.querySelector('.select-icon');
+const skySelectIcon = document.getElementById('sky-select-icon');
 const btnSound = document.getElementById('btn-sound');
 const soundLabel = document.getElementById('sound-label');
 
@@ -46,70 +46,191 @@ let lastMouseX = 0;
 let lastMouseY = 0;
 
 let currentSkyIndex = 0;
-const SKY_THEMES = [
-    { name: 'Sunset Glow', icon: '🌆' },
-    { name: 'Golden Sunrise', icon: '🌅' },
-    { name: 'Peaceful Dawn', icon: '🌄' },
-    { name: 'Dusk Twilight', icon: '🌆' },
-    { name: 'Moonlight Violet', icon: '🌙' },
-    { name: 'Golden Hour', icon: '☀️' },
-    { name: 'Starlit Night', icon: '✨' },
-    { name: 'Midnight Sky', icon: '🌌' },
-    { name: 'Aurora Dream', icon: '🌌' },
-    { name: 'Pink Horizon', icon: '🌸' },
-    { name: 'Blue Serenity', icon: '💙' },
-    { name: 'Cloudy Afternoon', icon: '☁️' },
-    { name: 'Silver Moon', icon: '🌕' },
-    { name: 'Celestial Night', icon: '🌠' },
-    { name: 'Crimson Sunset', icon: '🌇' },
-    { name: 'Lavender Sky', icon: '💜' },
-    { name: 'Misty Morning', icon: '🌫️' },
-    { name: 'Rainy Calm', icon: '🌦️' },
-    { name: 'Stormy Horizon', icon: '⛈️' },
-    { name: 'Cotton Clouds', icon: '☁️' },
-    { name: 'Ocean Breeze', icon: '🌊' },
-    { name: 'Arctic Twilight', icon: '❄️' },
-    { name: 'Galaxy Dreams', icon: '🌌' },
-    { name: 'Comet Trail', icon: '☄️' },
-    { name: 'Northern Lights', icon: '🌈' },
-    { name: 'Sakura Sky', icon: '🌸' },
-    { name: 'Amber Evening', icon: '🧡' },
-    { name: 'Crystal Dawn', icon: '💎' },
-    { name: 'Velvet Night', icon: '🌑' },
-    { name: 'Dreamy Horizon', icon: '🌤️' }
-];
 
-const SKY_GRADIENTS = [
-    ['#0c0414', '#220836', '#621658', '#ad2e66', '#e56d62', '#ffc266'],
-    ['#0f172a', '#1e1b4b', '#5b21b6', '#b91c1c', '#f97316', '#fde047'],
-    ['#170b2c', '#4a1a52', '#993a70', '#e06f88', '#ffe6b8'],
-    ['#180e29', '#38143e', '#781c53', '#b92b60', '#ff8a5c'],
-    ['#03010a', '#0e0b28', '#231847', '#3b2563', '#57367c'],
-    ['#1e1022', '#4a153b', '#9a2c4e', '#d96b43', '#facc15'],
-    ['#020617', '#0f172a', '#1e1b4b', '#312e81', '#4338ca'],
-    ['#020617', '#090d16', '#111827', '#1f2937', '#374151'],
-    ['#050515', '#0f172a', '#065f46', '#0d9488', '#2dd4bf', '#a7f3d0'],
-    ['#1e0b26', '#4a1038', '#86195c', '#be185d', '#f472b6', '#fbcfe8'],
-    ['#0c4a6e', '#0284c7', '#0369a1', '#38bdf8', '#7dd3fc', '#e0f2fe'],
-    ['#1e293b', '#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1'],
-    ['#020617', '#0f172a', '#1e293b', '#334155', '#475569', '#e2e8f0'],
-    ['#030712', '#0c0a20', '#1a103c', '#2e1065', '#581c87'],
-    ['#1a0505', '#450a0a', '#7f1d1d', '#991b1b', '#dc2626', '#f87171'],
-    ['#1e1b4b', '#3730a3', '#5b21b6', '#7c3aed', '#a855f7', '#e9d5ff'],
-    ['#0f172a', '#1e293b', '#334155', '#52525b', '#71717a', '#d4d4d8'],
-    ['#09131d', '#132336', '#1c3552', '#2a4c73', '#416896', '#6f96c2'],
-    ['#050811', '#0f172a', '#1e293b', '#334155', '#475569', '#94a3b8'],
-    ['#1e1b4b', '#4338ca', '#6366f1', '#818cf8', '#a5b4fc', '#e0e7ff'],
-    ['#042f2e', '#0d9488', '#14b8a6', '#2dd4bf', '#5eead4', '#ccfbf1'],
-    ['#030712', '#0f172a', '#164e63', '#0891b2', '#22d3ee', '#cffaff'],
-    ['#05030f', '#18072b', '#33084d', '#580c7a', '#8b12b3', '#d946ef'],
-    ['#020617', '#0f172a', '#1e1b4b', '#3730a3', '#4f46e5', '#a5b4fc'],
-    ['#030712', '#064e3b', '#047857', '#059669', '#10b981', '#6ee7b7'],
-    ['#2a081a', '#5c1038', '#991b5c', '#c02673', '#e11d48', '#fda4af'],
-    ['#1c0a00', '#451a03', '#78350f', '#92400e', '#b45309', '#fef08a'],
-    ['#0c0a20', '#1e1b4b', '#312e81', '#4338ca', '#6366f1', '#e0e7ff'],
-    ['#02040a', '#080d1a', '#0f172a', '#1e293b', '#334155'],
-    ['#1a0c27', '#421447', '#731c63', '#ad2879', '#e0569a', '#fbcfe8']
+// ── UNIFIED SKY THEME SYSTEM ─────────────────────────────────────
+// Each theme carries: name, icon, gradient stops (top→bottom),
+// isNight flag, blossomType, and environment color overrides.
+const SKY_THEMES = [
+    {
+        name: 'Sunset Glow', icon: '🌆',
+        gradient: ['#0c0414', '#220836', '#621658', '#ad2e66', '#e56d62', '#ffc266'],
+        isNight: false, isTwilight: true,
+        blossomType: 'cherry',
+        sunColor: ['rgba(255,230,100,0.98)', 'rgba(255,130,80,0.55)', 'rgba(210,50,120,0.2)'],
+        hillColor: ['#42163b', '#280c26', '#120414'],
+        waterTint: 'rgba(255,160,90,0.38)',
+        reedColor: '#a3e635', reedTip: '#fbcfe8',
+        snowTint: 'rgba(255,220,235,0.92)', snowMid: 'rgba(240,175,205,0.5)',
+        mistTint: 'rgba(235,120,160,0.22)',
+        bgHillTop: '#381035', bgHillBot: '#1f061d',
+        farMtTop: '#381237', farMtBot: '#1b061c',
+        mainMtStops: ['#591a52','#3b0e36','#240822','#140314'],
+    },
+    {
+        name: 'Golden Sunrise', icon: '🌅',
+        gradient: ['#0a0618', '#1a0f3a', '#5b1f8a', '#c0521a', '#f5922a', '#fde47a'],
+        isNight: false, isTwilight: true,
+        blossomType: 'autumn',
+        sunColor: ['rgba(255,235,140,0.98)', 'rgba(255,160,60,0.55)', 'rgba(180,60,20,0.2)'],
+        hillColor: ['#2a1240', '#180828', '#0a0416'],
+        waterTint: 'rgba(255,150,70,0.38)',
+        reedColor: '#bef264', reedTip: '#fde68a',
+        snowTint: 'rgba(255,235,190,0.92)', snowMid: 'rgba(240,190,140,0.5)',
+        mistTint: 'rgba(245,160,80,0.22)',
+        bgHillTop: '#2e1044', bgHillBot: '#18061e',
+        farMtTop: '#2e1240', farMtBot: '#160820',
+        mainMtStops: ['#3a1250','#240838','#140520','#080210'],
+    },
+    {
+        name: 'Moonlight Violet', icon: '🌙',
+        gradient: ['#02000a', '#0c0820', '#1e1244', '#3a2070', '#5a3898'],
+        isNight: true, isTwilight: false,
+        blossomType: 'violet',
+        sunColor: ['rgba(230,215,255,0.98)', 'rgba(160,110,255,0.5)', 'rgba(90,40,200,0.18)'],
+        hillColor: ['#1a1240', '#0e0828', '#04020e'],
+        waterTint: 'rgba(180,140,255,0.35)',
+        reedColor: '#84cc16', reedTip: '#e0e7ff',
+        snowTint: 'rgba(210,220,255,0.92)', snowMid: 'rgba(160,175,240,0.5)',
+        mistTint: 'rgba(130,110,210,0.22)',
+        bgHillTop: '#1a1040', bgHillBot: '#0a061e',
+        farMtTop: '#180e38', farMtBot: '#08041a',
+        mainMtStops: ['#2e1a5a','#1c1038','#0e0820','#04020c'],
+    },
+    {
+        name: 'Starlit Night', icon: '✨',
+        gradient: ['#01000a', '#080620', '#101438', '#1a2050', '#243068'],
+        isNight: true, isTwilight: false,
+        blossomType: 'violet',
+        sunColor: ['rgba(220,230,255,0.98)', 'rgba(130,160,255,0.45)', 'rgba(60,90,200,0.15)'],
+        hillColor: ['#0e1030', '#080a1e', '#02020c'],
+        waterTint: 'rgba(140,170,255,0.32)',
+        reedColor: '#6ee7b7', reedTip: '#dbeafe',
+        snowTint: 'rgba(200,220,255,0.90)', snowMid: 'rgba(150,180,240,0.5)',
+        mistTint: 'rgba(100,130,220,0.18)',
+        bgHillTop: '#0c1030', bgHillBot: '#060818',
+        farMtTop: '#0e1038', farMtBot: '#06081c',
+        mainMtStops: ['#1a1e4a','#0e1232','#060a1e','#02040c'],
+    },
+    {
+        name: 'Aurora Dream', icon: '🌌',
+        gradient: ['#020a10', '#051828', '#064e46', '#0d9488', '#2dd4bf', '#a7f3d0'],
+        isNight: true, isTwilight: false,
+        blossomType: 'frost',
+        sunColor: ['rgba(167,243,208,0.95)', 'rgba(45,212,191,0.45)', 'rgba(6,148,132,0.18)'],
+        hillColor: ['#062520', '#031410', '#010806'],
+        waterTint: 'rgba(45,212,191,0.35)',
+        reedColor: '#4ade80', reedTip: '#a7f3d0',
+        snowTint: 'rgba(200,255,240,0.90)', snowMid: 'rgba(130,230,210,0.5)',
+        mistTint: 'rgba(45,212,191,0.18)',
+        bgHillTop: '#052820', bgHillBot: '#021410',
+        farMtTop: '#052618', farMtBot: '#02120a',
+        mainMtStops: ['#0a3828','#061c14','#030e0a','#010604'],
+    },
+    {
+        name: 'Pink Horizon', icon: '🌸',
+        gradient: ['#1e0b28', '#4a1038', '#86195c', '#be185d', '#f472b6', '#fbcfe8'],
+        isNight: false, isTwilight: true,
+        blossomType: 'cherry',
+        sunColor: ['rgba(255,220,235,0.98)', 'rgba(244,114,182,0.55)', 'rgba(190,24,93,0.2)'],
+        hillColor: ['#3a0e30', '#220820', '#0e0410'],
+        waterTint: 'rgba(244,114,182,0.40)',
+        reedColor: '#f9a8d4', reedTip: '#fce7f3',
+        snowTint: 'rgba(255,210,235,0.92)', snowMid: 'rgba(240,165,200,0.5)',
+        mistTint: 'rgba(240,100,170,0.22)',
+        bgHillTop: '#3a1035', bgHillBot: '#1e0820',
+        farMtTop: '#3c1238', farMtBot: '#1c081a',
+        mainMtStops: ['#5a1845','#380e2c','#1e0818','#0c020c'],
+    },
+    {
+        name: 'Golden Hour', icon: '☀️',
+        gradient: ['#1a0610', '#420e1a', '#8c1e2c', '#cc5514', '#f5a020', '#fde047'],
+        isNight: false, isTwilight: true,
+        blossomType: 'autumn',
+        sunColor: ['rgba(255,250,180,0.98)', 'rgba(250,180,50,0.55)', 'rgba(200,80,20,0.2)'],
+        hillColor: ['#300c14', '#1c0808', '#0c0204'],
+        waterTint: 'rgba(250,160,50,0.40)',
+        reedColor: '#a3e635', reedTip: '#fef08a',
+        snowTint: 'rgba(255,245,200,0.92)', snowMid: 'rgba(240,200,140,0.5)',
+        mistTint: 'rgba(245,150,60,0.22)',
+        bgHillTop: '#2c0e10', bgHillBot: '#160608',
+        farMtTop: '#2e1012', farMtBot: '#160608',
+        mainMtStops: ['#401022','#280810','#160408','#080204'],
+    },
+    {
+        name: 'Crimson Sunset', icon: '🌇',
+        gradient: ['#120204', '#300606', '#6e0e0e', '#a81010', '#d42820', '#f87060'],
+        isNight: false, isTwilight: true,
+        blossomType: 'autumn',
+        sunColor: ['rgba(255,235,200,0.98)', 'rgba(255,120,80,0.55)', 'rgba(200,30,20,0.2)'],
+        hillColor: ['#280808', '#160404', '#060202'],
+        waterTint: 'rgba(248,112,96,0.38)',
+        reedColor: '#fbbf24', reedTip: '#fed7aa',
+        snowTint: 'rgba(255,220,200,0.92)', snowMid: 'rgba(240,170,150,0.5)',
+        mistTint: 'rgba(230,80,60,0.22)',
+        bgHillTop: '#2a0808', bgHillBot: '#140404',
+        farMtTop: '#2e0a0a', farMtBot: '#160404',
+        mainMtStops: ['#401010','#280808','#160404','#060202'],
+    },
+    {
+        name: 'Lavender Sky', icon: '💜',
+        gradient: ['#100c30', '#281860', '#4c30a0', '#7c50d0', '#a880e8', '#e0c8ff'],
+        isNight: false, isTwilight: false,
+        blossomType: 'violet',
+        sunColor: ['rgba(240,220,255,0.98)', 'rgba(168,130,240,0.55)', 'rgba(100,60,200,0.2)'],
+        hillColor: ['#1e1048', '#100830', '#060418'],
+        waterTint: 'rgba(168,130,255,0.38)',
+        reedColor: '#c084fc', reedTip: '#e9d5ff',
+        snowTint: 'rgba(230,210,255,0.92)', snowMid: 'rgba(190,160,240,0.5)',
+        mistTint: 'rgba(160,110,240,0.22)',
+        bgHillTop: '#1e1048', bgHillBot: '#0e0830',
+        farMtTop: '#201250', farMtBot: '#100840',
+        mainMtStops: ['#2e1460','#1c0c3e','#0e0622','#040210'],
+    },
+    {
+        name: 'Blue Serenity', icon: '💙',
+        gradient: ['#020e1e', '#041e40', '#0a3870', '#1464a0', '#2894c8', '#70c8f0'],
+        isNight: false, isTwilight: false,
+        blossomType: 'frost',
+        sunColor: ['rgba(200,235,255,0.98)', 'rgba(56,189,248,0.50)', 'rgba(2,132,199,0.18)'],
+        hillColor: ['#081830', '#040e1e', '#01060e'],
+        waterTint: 'rgba(56,189,248,0.38)',
+        reedColor: '#38bdf8', reedTip: '#e0f2fe',
+        snowTint: 'rgba(200,235,255,0.92)', snowMid: 'rgba(150,200,240,0.5)',
+        mistTint: 'rgba(40,148,200,0.20)',
+        bgHillTop: '#081830', bgHillBot: '#040c1c',
+        farMtTop: '#0a1838', farMtBot: '#040e1e',
+        mainMtStops: ['#0a2040','#061428','#030a18','#010508'],
+    },
+    {
+        name: 'Northern Lights', icon: '🌈',
+        gradient: ['#010a08', '#041a12', '#064e3b', '#059669', '#10b981', '#6ee7b7'],
+        isNight: true, isTwilight: false,
+        blossomType: 'frost',
+        sunColor: ['rgba(167,243,208,0.95)', 'rgba(16,185,129,0.45)', 'rgba(5,150,105,0.18)'],
+        hillColor: ['#041a10', '#020e08', '#010602'],
+        waterTint: 'rgba(16,185,129,0.35)',
+        reedColor: '#4ade80', reedTip: '#bbf7d0',
+        snowTint: 'rgba(190,255,230,0.90)', snowMid: 'rgba(110,231,183,0.5)',
+        mistTint: 'rgba(5,150,105,0.18)',
+        bgHillTop: '#041c10', bgHillBot: '#020e06',
+        farMtTop: '#041e12', farMtBot: '#020e06',
+        mainMtStops: ['#082818','#04160c','#020a06','#010502'],
+    },
+    {
+        name: 'Velvet Night', icon: '🌑',
+        gradient: ['#000005', '#050310', '#0c0820', '#141030', '#1e183e'],
+        isNight: true, isTwilight: false,
+        blossomType: 'violet',
+        sunColor: ['rgba(200,190,255,0.95)', 'rgba(100,80,200,0.40)', 'rgba(50,30,140,0.15)'],
+        hillColor: ['#0e0c28', '#06081a', '#010208'],
+        waterTint: 'rgba(100,80,200,0.30)',
+        reedColor: '#818cf8', reedTip: '#c7d2fe',
+        snowTint: 'rgba(190,185,255,0.88)', snowMid: 'rgba(140,130,220,0.5)',
+        mistTint: 'rgba(80,60,180,0.18)',
+        bgHillTop: '#0c0c28', bgHillBot: '#060618',
+        farMtTop: '#0e0c30', farMtBot: '#08061c',
+        mainMtStops: ['#181440','#0c0c28','#060618','#020208'],
+    },
 ];
 
 let audioEnabled = true;
@@ -137,11 +258,10 @@ const petalSprites = [];
 const cherrySprites = [];
 
 function getThemeBlossomColors(themeIdx) {
-    const autumnThemes = [1, 5, 14, 26];
-    const violetThemes = [4, 6, 7, 13, 15, 22, 23, 28];
-    const frostThemes = [8, 10, 17, 18, 20, 21, 24];
+    const theme = SKY_THEMES[themeIdx % SKY_THEMES.length];
+    const type = theme ? theme.blossomType : 'cherry';
 
-    if (autumnThemes.includes(themeIdx)) {
+    if (type === 'autumn') {
         return [
             { fill: '#b91c1c', shadow: '#7f1d1d', center: '#f97316' },
             { fill: '#c2410c', shadow: '#9a3412', center: '#fbbf24' },
@@ -149,7 +269,7 @@ function getThemeBlossomColors(themeIdx) {
             { fill: '#eab308', shadow: '#ca8a04', center: '#ffffff' },
             { fill: '#fef08a', shadow: '#f59e0b', center: '#ffffff' }
         ];
-    } else if (violetThemes.includes(themeIdx)) {
+    } else if (type === 'violet') {
         return [
             { fill: '#4c1d95', shadow: '#2e1065', center: '#a855f7' },
             { fill: '#6b21a8', shadow: '#4c1d95', center: '#c084fc' },
@@ -157,7 +277,7 @@ function getThemeBlossomColors(themeIdx) {
             { fill: '#a855f7', shadow: '#7e22ce', center: '#f5d0fe' },
             { fill: '#e9d5ff', shadow: '#a855f7', center: '#ffffff' }
         ];
-    } else if (frostThemes.includes(themeIdx)) {
+    } else if (type === 'frost') {
         return [
             { fill: '#0369a1', shadow: '#0c4a6e', center: '#38bdf8' },
             { fill: '#0284c7', shadow: '#0369a1', center: '#7dd3fc' },
@@ -165,7 +285,7 @@ function getThemeBlossomColors(themeIdx) {
             { fill: '#38bdf8', shadow: '#0284c7', center: '#e0f2fe' },
             { fill: '#e0f2fe', shadow: '#38bdf8', center: '#ffffff' }
         ];
-    } else {
+    } else { // 'cherry' (default)
         return [
             { fill: '#7b1fa2', shadow: '#4a0072', center: '#aa26d0' },
             { fill: '#9c27b0', shadow: '#6a0080', center: '#c834e0' },
@@ -360,6 +480,7 @@ function resize() {
         build3DTree();
         drawSky();
     }
+    positionDialogueBox();
 }
 window.addEventListener('resize', resize);
 
@@ -454,10 +575,13 @@ function grow3DBranch(node) {
     all3DBranches.push(node);
 
     if (node.depth >= node.maxDepth) {
+        if (blossomSprites.length === 0) preRenderSprites();
+
         // Generate massive wide dome canopy clusters matching cherry.jpg
         const numClusters = 5 + Math.floor(Math.random() * 4);
         for (let i = 0; i < numClusters; i++) {
-            const sprite = blossomSprites[Math.floor(Math.random() * blossomSprites.length)];
+            const sprite = blossomSprites.length > 0 ? blossomSprites[Math.floor(Math.random() * blossomSprites.length)] : null;
+            if (!sprite) continue;
             const cluster = {
                 x: node.endX + (Math.random() - 0.5) * 60,
                 y: node.endY + (Math.random() - 0.5) * 40,
@@ -469,28 +593,32 @@ function grow3DBranch(node) {
             all3DClusters.push(cluster);
 
             // Hanging weeping drapes from outer canopy edges
-            if (Math.random() < 0.6) {
+            if (Math.random() < 0.6 && drapeSprites.length > 0) {
                 const drapeSprite = drapeSprites[Math.floor(Math.random() * drapeSprites.length)];
-                const drape = {
-                    x: cluster.x,
-                    y: cluster.y - 10,
-                    z: cluster.z,
-                    sprite: drapeSprite
-                };
-                node.drapes.push(drape);
-                all3DDrapes.push(drape);
+                if (drapeSprite) {
+                    const drape = {
+                        x: cluster.x,
+                        y: cluster.y - 10,
+                        z: cluster.z,
+                        sprite: drapeSprite
+                    };
+                    node.drapes.push(drape);
+                    all3DDrapes.push(drape);
+                }
             }
 
             // Hanging Ripe Cherries (🍒)
             if (Math.random() < 0.65 && cherrySprites.length > 0) {
                 const cherrySprite = cherrySprites[Math.floor(Math.random() * cherrySprites.length)];
-                const cherry = {
-                    x: cluster.x + (Math.random() - 0.5) * 20,
-                    y: cluster.y - 12,
-                    z: cluster.z + (Math.random() - 0.5) * 20,
-                    sprite: cherrySprite
-                };
-                all3DCherries.push(cherry);
+                if (cherrySprite) {
+                    const cherry = {
+                        x: cluster.x + (Math.random() - 0.5) * 20,
+                        y: cluster.y - 12,
+                        z: cluster.z + (Math.random() - 0.5) * 20,
+                        sprite: cherrySprite
+                    };
+                    all3DCherries.push(cherry);
+                }
             }
         }
         return;
@@ -659,55 +787,147 @@ function init3DParticles() {
 }
 
 
-// ── SUNSET SKY & ENVIRONMENT (MATCHING CHERRY.JPG) ─────────────
+// ── SKY ENVIRONMENT RENDERER ─────────────────────────────────────
 let stars = [];
-for (let i = 0; i < 90; i++) {
-    stars.push({ x: Math.random(), y: Math.random() * 0.65, size: 1 + Math.random() * 1.5 });
+for (let i = 0; i < 120; i++) {
+    stars.push({
+        x: Math.random(),
+        y: Math.random() * 0.70,
+        size: 0.6 + Math.random() * 1.8,
+        twinkle: Math.random() * Math.PI * 2 // random twinkle phase offset
+    });
 }
+
+// Static clouds (repositioned on resize)
+let clouds = [];
+function buildClouds() {
+    clouds = [];
+    for (let i = 0; i < 6; i++) {
+        clouds.push({
+            x: Math.random(),
+            y: 0.06 + Math.random() * 0.28,
+            w: 0.08 + Math.random() * 0.14,
+            h: 0.025 + Math.random() * 0.04,
+            alpha: 0.08 + Math.random() * 0.14,
+            speed: 0.000015 + Math.random() * 0.00002
+        });
+    }
+}
+buildClouds();
 
 function drawSky() {
     sCtx.clearRect(0, 0, W, H);
 
+    const theme = SKY_THEMES[currentSkyIndex % SKY_THEMES.length];
+
+    // ── 1. Sky Gradient ──────────────────────────────────────────
     const skyGrad = sCtx.createLinearGradient(0, 0, 0, H);
-    const themeIdx = currentSkyIndex % SKY_THEMES.length;
-    const colorStops = SKY_GRADIENTS[themeIdx] || SKY_GRADIENTS[0];
-
-    for (let i = 0; i < colorStops.length; i++) {
-        skyGrad.addColorStop(i / (colorStops.length - 1), colorStops[i]);
+    const stops = theme.gradient;
+    for (let i = 0; i < stops.length; i++) {
+        skyGrad.addColorStop(i / (stops.length - 1), stops[i]);
     }
-
     sCtx.fillStyle = skyGrad;
     sCtx.fillRect(0, 0, W, H);
 
-    // Sun / Moon Disc & Atmosphere Radiant Glow
-    const cx = W * 0.72;
-    const cy = H * 0.32;
-    const sunGrad = sCtx.createRadialGradient(cx, cy, 0, cx, cy, 190);
-
-    const isNightTheme = [4, 6, 7, 8, 12, 13, 22, 23, 24, 28].includes(themeIdx);
-    sunGrad.addColorStop(0, isNightTheme ? 'rgba(230, 210, 255, 0.95)' : 'rgba(255, 240, 190, 0.95)');
-    sunGrad.addColorStop(0.35, isNightTheme ? 'rgba(160, 120, 255, 0.5)' : 'rgba(255, 140, 110, 0.55)');
-    sunGrad.addColorStop(0.7, isNightTheme ? 'rgba(100, 50, 200, 0.2)' : 'rgba(200, 50, 120, 0.2)');
-    sunGrad.addColorStop(1, 'rgba(0,0,0,0)');
-
-    sCtx.beginPath();
-    sCtx.arc(cx, cy, 190, 0, Math.PI * 2);
-    sCtx.fillStyle = sunGrad;
-    sCtx.fill();
-
-    sCtx.beginPath();
-    sCtx.arc(cx, cy, 40, 0, Math.PI * 2);
-    sCtx.fillStyle = isNightTheme ? '#f8f4ff' : '#fff8eb';
-    sCtx.fill();
-
-    // Luminous Stars
-    const starAlpha = isNightTheme ? 0.85 : 0.45;
-    sCtx.fillStyle = `rgba(255, 250, 235, ${starAlpha})`;
-    stars.forEach(s => {
+    // ── 2. Stars ─────────────────────────────────────────────────
+    const starBasealpha = theme.isNight ? 0.92 : (theme.isTwilight ? 0.40 : 0.18);
+    stars.forEach((s, i) => {
+        const twinkleAlpha = starBasealpha * (0.70 + 0.30 * Math.sin(time * 1.8 + s.twinkle));
+        const sz = s.size * (theme.isNight ? 1.0 : 0.65);
         sCtx.beginPath();
-        sCtx.arc(s.x * W, s.y * H, s.size, 0, Math.PI * 2);
+        sCtx.arc(s.x * W, s.y * H, sz, 0, Math.PI * 2);
+        sCtx.fillStyle = `rgba(255, 252, 240, ${twinkleAlpha})`;
         sCtx.fill();
     });
+
+    // ── 3. Sun / Moon Disc & Atmosphere Radiance ─────────────────
+    const cx = W * 0.72;
+    const cy = H * 0.26;
+    const sc = theme.sunColor;
+
+    // Radiance glow
+    const glowGrad = sCtx.createRadialGradient(cx, cy, 0, cx, cy, H * 0.42);
+    glowGrad.addColorStop(0, sc[0]);
+    glowGrad.addColorStop(0.35, sc[1]);
+    glowGrad.addColorStop(0.75, sc[2]);
+    glowGrad.addColorStop(1, 'rgba(0,0,0,0)');
+    sCtx.beginPath();
+    sCtx.arc(cx, cy, H * 0.42, 0, Math.PI * 2);
+    sCtx.fillStyle = glowGrad;
+    sCtx.fill();
+
+    if (theme.isNight) {
+        // Crescent moon: full circle minus offset circle mask
+        const moonR = W < 600 ? 22 : 32;
+        sCtx.save();
+        sCtx.beginPath();
+        sCtx.arc(cx, cy, moonR, 0, Math.PI * 2);
+        sCtx.fillStyle = '#f8f2ff';
+        sCtx.fill();
+        // Inner mask to carve crescent
+        sCtx.globalCompositeOperation = 'destination-out';
+        sCtx.beginPath();
+        sCtx.arc(cx + moonR * 0.52, cy - moonR * 0.12, moonR * 0.82, 0, Math.PI * 2);
+        sCtx.fill();
+        sCtx.globalCompositeOperation = 'source-over';
+        // Soft moon glow ring
+        const moonGlow = sCtx.createRadialGradient(cx, cy, moonR * 0.6, cx, cy, moonR * 2.5);
+        moonGlow.addColorStop(0, 'rgba(230, 210, 255, 0.18)');
+        moonGlow.addColorStop(1, 'rgba(0,0,0,0)');
+        sCtx.beginPath();
+        sCtx.arc(cx, cy, moonR * 2.5, 0, Math.PI * 2);
+        sCtx.fillStyle = moonGlow;
+        sCtx.fill();
+        sCtx.restore();
+    } else {
+        // Sun disc
+        const sunR = W < 600 ? 20 : 30;
+        sCtx.beginPath();
+        sCtx.arc(cx, cy, sunR, 0, Math.PI * 2);
+        sCtx.fillStyle = '#fff9e8';
+        sCtx.fill();
+        // Sun corona ring
+        sCtx.beginPath();
+        sCtx.arc(cx, cy, sunR * 1.28, 0, Math.PI * 2);
+        sCtx.strokeStyle = 'rgba(255,240,160,0.28)';
+        sCtx.lineWidth = sunR * 0.35;
+        sCtx.stroke();
+    }
+
+    // ── 4. Clouds (day & twilight themes) ────────────────────────
+    if (!theme.isNight) {
+        // Drift clouds slowly
+        clouds.forEach(c => {
+            c.x = (c.x + c.speed) % 1.12;
+        });
+
+        clouds.forEach(c => {
+            const cx2 = c.x * W;
+            const cy2 = c.y * H;
+            const rw = c.w * W;
+            const rh = c.h * H;
+            const alpha = theme.isTwilight ? c.alpha * 0.7 : c.alpha * 1.1;
+
+            sCtx.save();
+            sCtx.globalAlpha = alpha;
+            sCtx.fillStyle = '#ffffff';
+
+            // Billowy cloud shape using overlapping ellipses
+            const drawCloudPuff = (ox, oy, rx, ry) => {
+                sCtx.beginPath();
+                sCtx.ellipse(cx2 + ox, cy2 + oy, rx, ry, 0, 0, Math.PI * 2);
+                sCtx.fill();
+            };
+            drawCloudPuff(0, 0, rw * 0.5, rh);
+            drawCloudPuff(-rw * 0.38, rh * 0.2, rw * 0.36, rh * 0.82);
+            drawCloudPuff(rw * 0.38, rh * 0.22, rw * 0.34, rh * 0.75);
+            drawCloudPuff(-rw * 0.18, -rh * 0.3, rw * 0.28, rh * 0.68);
+            drawCloudPuff(rw * 0.2, -rh * 0.28, rw * 0.26, rh * 0.65);
+
+            sCtx.globalAlpha = 1;
+            sCtx.restore();
+        });
+    }
 }
 
 // ── SWIMMING ELEGANT SWANS FAMILY ANIMATION (FLY IN ONCE & SWIM PERMANENTLY) ──
@@ -1535,9 +1755,10 @@ function drawDistantVillageAndTrees(ctx) {
     ctx.save();
 
     // Far Background Misty Mountain Range
+    const skyTheme = SKY_THEMES[currentSkyIndex % SKY_THEMES.length];
     const farMtGrad = ctx.createLinearGradient(0, horizonY - 120, 0, horizonY);
-    farMtGrad.addColorStop(0, currentSkyIndex === 0 ? '#381237' : '#140f2b');
-    farMtGrad.addColorStop(1, currentSkyIndex === 0 ? '#1b061c' : '#080414');
+    farMtGrad.addColorStop(0, skyTheme.farMtTop);
+    farMtGrad.addColorStop(1, skyTheme.farMtBot);
 
     // Far Left Peak
     ctx.beginPath();
@@ -1560,17 +1781,11 @@ function drawDistantVillageAndTrees(ctx) {
 
     // Main Mountain Mass
     const mainMtGrad = ctx.createLinearGradient(mtx, mty, mtx, horizonY + 20);
-    if (currentSkyIndex === 0) {
-        mainMtGrad.addColorStop(0, '#591a52');
-        mainMtGrad.addColorStop(0.35, '#3b0e36');
-        mainMtGrad.addColorStop(0.7, '#240822');
-        mainMtGrad.addColorStop(1, '#140314');
-    } else {
-        mainMtGrad.addColorStop(0, '#2e1e56');
-        mainMtGrad.addColorStop(0.35, '#1b103b');
-        mainMtGrad.addColorStop(0.7, '#100826');
-        mainMtGrad.addColorStop(1, '#070312');
-    }
+    const mmStops = skyTheme.mainMtStops;
+    mainMtGrad.addColorStop(0, mmStops[0]);
+    mainMtGrad.addColorStop(0.35, mmStops[1]);
+    mainMtGrad.addColorStop(0.7, mmStops[2]);
+    mainMtGrad.addColorStop(1, mmStops[3]);
 
     // Realistic craggy mountain profile
     ctx.beginPath();
@@ -1598,8 +1813,8 @@ function drawDistantVillageAndTrees(ctx) {
 
     // Realistic Snow-Cap & Ridge Gullies
     const snowGrad = ctx.createLinearGradient(mtx, mty, mtx, mty + 55);
-    snowGrad.addColorStop(0, currentSkyIndex === 0 ? 'rgba(255, 230, 242, 0.92)' : 'rgba(220, 230, 255, 0.92)');
-    snowGrad.addColorStop(0.6, currentSkyIndex === 0 ? 'rgba(240, 180, 210, 0.5)' : 'rgba(170, 190, 240, 0.5)');
+    snowGrad.addColorStop(0, skyTheme.snowTint);
+    snowGrad.addColorStop(0.6, skyTheme.snowMid);
     snowGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
 
     // Realistic Snow Cap Contour with Ravine Finger Insets
@@ -1622,7 +1837,7 @@ function drawDistantVillageAndTrees(ctx) {
     // Mountain Base Twilight Mist
     const mistGrad = ctx.createLinearGradient(0, horizonY - 40, 0, horizonY + 10);
     mistGrad.addColorStop(0, 'rgba(0, 0, 0, 0)');
-    mistGrad.addColorStop(1, currentSkyIndex === 0 ? 'rgba(235, 120, 160, 0.22)' : 'rgba(140, 120, 200, 0.22)');
+    mistGrad.addColorStop(1, skyTheme.mistTint);
     ctx.fillStyle = mistGrad;
     ctx.fillRect(0, horizonY - 40, W, 50);
 
@@ -1630,8 +1845,8 @@ function drawDistantVillageAndTrees(ctx) {
 
     // Front Ridgeline Fill (Slightly raised under village houses)
     const bgHillGrad = ctx.createLinearGradient(0, horizonY - 40, 0, horizonY + 30);
-    bgHillGrad.addColorStop(0, currentSkyIndex === 0 ? '#381035' : '#191238');
-    bgHillGrad.addColorStop(1, currentSkyIndex === 0 ? '#1f061d' : '#0c061c');
+    bgHillGrad.addColorStop(0, skyTheme.bgHillTop);
+    bgHillGrad.addColorStop(1, skyTheme.bgHillBot);
 
     ctx.beginPath();
     ctx.moveTo(0, H);
@@ -1678,12 +1893,13 @@ function drawDistantVillageAndTrees(ctx) {
             ctx.closePath();
 
             const waterGrad = ctx.createLinearGradient(leftX, y1, rightX, y2);
-            if (currentSkyIndex === 0) { // Sunset twilight sky water reflection
+            const isTwilightTheme = SKY_THEMES[currentSkyIndex % SKY_THEMES.length].isTwilight;
+            if (isTwilightTheme) { // Sunset/Twilight sky water reflection
                 waterGrad.addColorStop(0, 'rgba(244, 114, 182, 0.55)');
                 waterGrad.addColorStop(0.4, 'rgba(251, 146, 60, 0.45)');
                 waterGrad.addColorStop(0.8, 'rgba(192, 132, 252, 0.5)');
                 waterGrad.addColorStop(1, 'rgba(253, 224, 71, 0.4)');
-            } else { // Moonlight water reflection
+            } else { // Night/Day sky water reflection
                 waterGrad.addColorStop(0, 'rgba(192, 132, 252, 0.45)');
                 waterGrad.addColorStop(0.5, 'rgba(129, 140, 248, 0.4)');
                 waterGrad.addColorStop(1, 'rgba(96, 165, 250, 0.35)');
@@ -1697,13 +1913,13 @@ function drawDistantVillageAndTrees(ctx) {
             ctx.stroke();
 
             // Highlight on water edge
-            ctx.strokeStyle = currentSkyIndex === 0 ? 'rgba(254, 215, 170, 0.6)' : 'rgba(224, 231, 255, 0.5)';
+            ctx.strokeStyle = SKY_THEMES[currentSkyIndex % SKY_THEMES.length].isTwilight ? 'rgba(254, 215, 170, 0.6)' : 'rgba(224, 231, 255, 0.5)';
             ctx.lineWidth = 0.8;
             ctx.stroke();
 
             // 4. Realistic Rice Plant Shoots in Grid Rows
             const numColumns = Math.floor((rightX - leftX) / 14);
-            const stalkColor = currentSkyIndex === 0 ? '#a3e635' : '#84cc16';
+            const stalkColor = SKY_THEMES[currentSkyIndex % SKY_THEMES.length].reedColor;
 
             for (let c = 0; c < numColumns; c++) {
                 const rx = leftX + 10 + c * 14 + (Math.sin(c * 2) * 2);
@@ -2079,16 +2295,11 @@ function drawGroundHill(ctx) {
     );
 
     // 1. Stepped Purple Hill Base (matching cherry.jpg)
+    const groundTheme = SKY_THEMES[currentSkyIndex % SKY_THEMES.length];
     const hillGrad = ctx.createLinearGradient(0, hillY, 0, H);
-    if (currentSkyIndex === 0) {
-        hillGrad.addColorStop(0, '#42163b');
-        hillGrad.addColorStop(0.4, '#280c26');
-        hillGrad.addColorStop(1, '#120414');
-    } else {
-        hillGrad.addColorStop(0, '#1c163b');
-        hillGrad.addColorStop(0.4, '#100c26');
-        hillGrad.addColorStop(1, '#050414');
-    }
+    hillGrad.addColorStop(0, groundTheme.hillColor[0]);
+    hillGrad.addColorStop(0.4, groundTheme.hillColor[1]);
+    hillGrad.addColorStop(1, groundTheme.hillColor[2]);
 
     ctx.save();
     ctx.beginPath();
@@ -2113,10 +2324,10 @@ function drawGroundHill(ctx) {
     ctx.fillStyle = pondGrad;
     ctx.fill();
 
-    // Sunset Glow Reflection on Water
+    // Sky-Tinted Glow Reflection on Water
     ctx.beginPath();
     ctx.ellipse(pondX + pondRadiusX * 0.15, pondY - pondRadiusY * 0.15, pondRadiusX * 0.45, pondRadiusY * 0.35, 0, 0, Math.PI * 2);
-    ctx.fillStyle = currentSkyIndex === 0 ? 'rgba(255, 170, 100, 0.35)' : 'rgba(186, 230, 253, 0.30)';
+    ctx.fillStyle = SKY_THEMES[currentSkyIndex % SKY_THEMES.length].waterTint;
     ctx.fill();
 
     // Floating Water Lilies & Blooming Lotus Flowers
@@ -2950,7 +3161,8 @@ function drawLushSwayingGrass(ctx, pX, pY, pRadX, pRadY) {
         { x: pondX + pondRadiusX * 0.96, y: pondY - 8, count: 7, height: isMobile ? 18 : 24, swayPhase: 1.0 }
     ];
 
-    const reedColor = currentSkyIndex === 0 ? '#a3e635' : '#84cc16';
+    const pondEdgeTheme = SKY_THEMES[currentSkyIndex % SKY_THEMES.length];
+    const reedColor = pondEdgeTheme.reedColor;
     ctx.strokeStyle = reedColor;
 
     pondReeds.forEach(rg => {
@@ -2966,7 +3178,7 @@ function drawLushSwayingGrass(ctx, pX, pY, pRadX, pRadY) {
             ctx.stroke();
 
             if (i % 2 === 0) {
-                ctx.fillStyle = currentSkyIndex === 0 ? '#fbcfe8' : '#e0e7ff';
+                ctx.fillStyle = pondEdgeTheme.reedTip;
                 ctx.beginPath();
                 ctx.arc(bx + sway, rg.y - h, 2.0, 0, Math.PI * 2);
                 ctx.fill();
@@ -3333,14 +3545,29 @@ const lyricsLine = document.getElementById('lyrics-line');
 
 const bgMusic = document.getElementById('bg-music');
 if (bgMusic) {
-    bgMusic.loop = true;
+    bgMusic.loop = false; // Auto-advance to next song on finish
     bgMusic.muted = false;
     bgMusic.volume = 1.0;
+
+    // Automatically play next song in playlist when current song ends
+    bgMusic.addEventListener('ended', () => {
+        const nextIndex = (currentMusicIndex + 1) % MUSIC_PLAYLIST.length;
+        playSelectedMusic(nextIndex, true);
+    });
 }
 
-const btnMusicUpload = document.getElementById('btn-music-upload');
-const musicInput = document.getElementById('music-input');
-const musicLabel = document.getElementById('music-label');
+const MUSIC_PLAYLIST = [
+    { name: 'Default Melody', icon: '🎵', src: 'music.mp3' },
+    { name: 'Photograph', icon: '📷', src: 'photograph.mp3' },
+    { name: 'Pangarap Lang Kita', icon: '💭', src: 'parangap_lang_kita.mp3' },
+    { name: 'Panaginip', icon: '🌙', src: 'panaginip.mp3' },
+    { name: 'I Like Your Eyes', icon: '👀', src: 'i_likeyour_eyes.mp3' },
+    { name: 'Can\'t Help Falling In Love', icon: '💖', src: 'can_help_falling_inlove.mp3' }
+];
+
+let currentMusicIndex = 0;
+const musicSelect = document.getElementById('music-select');
+const musicSelectIcon = document.getElementById('music-select-icon');
 
 const CONVERSATION = [
     { speaker: '', text: 'Hi, Claue. 🌸' },
@@ -3364,21 +3591,41 @@ let customMusicLoaded = false;
 let isArrived = false;
 let lyricsCompleted = false;
 
-// Handle Music File Upload
-if (btnMusicUpload && musicInput) {
-    btnMusicUpload.addEventListener('click', () => musicInput.click());
-    musicInput.addEventListener('change', (e) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            const url = URL.createObjectURL(file);
-            bgMusic.src = url;
-            bgMusic.loop = true;
-            customMusicLoaded = true;
-            musicLabel.textContent = file.name.substring(0, 10) + '...';
-            if (conversationFinished) startMusicAndLyrics();
+function playSelectedMusic(index, forcePlay = false) {
+    if (index >= 0 && index < MUSIC_PLAYLIST.length) {
+        currentMusicIndex = index;
+        const track = MUSIC_PLAYLIST[index];
+        if (musicSelectIcon) musicSelectIcon.textContent = track.icon;
+        if (musicSelect) musicSelect.value = index;
+
+        if (bgMusic) {
+            bgMusic.src = track.src;
+            bgMusic.loop = false;
+            bgMusic.muted = false;
+            bgMusic.volume = 1.0;
+
+            if (conversationFinished || forcePlay) {
+                bgMusic.play().catch(e => console.log('Audio playback deferred:', e));
+                if (lyricsSub) {
+                    lyricsSub.textContent = `${track.icon} Playing: ${track.name}`;
+                }
+                if (lyricsBox && !lyricsCompleted) {
+                    lyricsBox.classList.remove('hidden');
+                }
+            } else {
+                // Dialogue still speaking: show log notice and defer playback until speaking finishes
+                if (lyricsSub) {
+                    lyricsSub.textContent = `${track.icon} Selected: ${track.name} (Plays after speaking)`;
+                }
+                if (lyricsBox) {
+                    lyricsBox.classList.remove('hidden');
+                }
+            }
         }
-    });
+    }
 }
+
+
 
 let musicStarted = false;
 let conversationDelayTimer = 0;
@@ -3386,46 +3633,45 @@ let musicDelayTimer = 0;
 
 // ── DIALOGUE TIMING & DELAY CONFIGURATION ──────────────────────
 const CONVERSATION_START_DELAY = 2.2; // Pause (seconds) after arrival before 1st dialogue appears
-const DIALOGUE_INTERVAL = 3.5;        // Duration (seconds) each dialogue speech bubble stays on screen
+const DIALOGUE_INTERVAL = 1.0;        // Duration (seconds) each dialogue speech bubble stays on screen
 const MUSIC_START_DELAY = 1.0;        // Pause (seconds) after dialogue ends before music starts
+
+// Dynamically lock dialogue box position right above couple's heads across all device viewports
+function positionDialogueBox() {
+    if (!dialogueBox || conversationFinished || dialogueIndex < 0 || dialogueIndex >= CONVERSATION.length) return;
+
+    const isMobile = W < 600;
+    const isPortrait = H > W;
+
+    const hillY = H * (isPortrait ? 0.68 : 0.70);
+    const benchX = W * (isMobile ? (isPortrait ? 0.22 : 0.28) : 0.35);
+    const benchY = hillY + (isMobile ? (isPortrait ? 18 : 22) : 26);
+    const benchW = isMobile ? (isPortrait ? 52 : 58) : 68;
+
+    const coupleHeadX = benchX + benchW * 0.5;
+    const coupleHeadY = benchY - (isMobile ? 24 : 28);
+
+    const boxWidth = dialogueBox.offsetWidth || 280;
+    const halfW = boxWidth / 2;
+
+    let targetX = coupleHeadX;
+    if (targetX - halfW < 16) {
+        targetX = 16 + halfW;
+    } else if (targetX + halfW > W - 16) {
+        targetX = W - 16 - halfW;
+    }
+
+    dialogueBox.style.left = `${Math.round(targetX)}px`;
+    dialogueBox.style.top = `${Math.round(coupleHeadY - 14)}px`;
+
+    const arrowOffset = coupleHeadX - (targetX - halfW);
+    const arrowPercent = Math.max(15, Math.min(85, (arrowOffset / boxWidth) * 100));
+    dialogueBox.style.setProperty('--arrow-left', `${arrowPercent.toFixed(1)}%`);
+}
 
 function updateDialogueAndLyrics(arrived) {
     isArrived = arrived;
     if (!sceneActive) return;
-
-    // Dynamically lock dialogue box position right above couple's heads across all device viewports
-    if (dialogueBox) {
-        const isMobile = W < 600;
-        const isPortrait = H > W;
-
-        const hillY = H * (isPortrait ? 0.68 : 0.70);
-        const benchX = W * (isMobile ? (isPortrait ? 0.22 : 0.28) : 0.35);
-        const benchY = hillY + (isMobile ? (isPortrait ? 18 : 22) : 26);
-        const benchW = isMobile ? (isPortrait ? 52 : 58) : 68;
-
-        const coupleHeadX = benchX + benchW * 0.5;
-        const coupleHeadY = benchY - (isMobile ? 24 : 28);
-
-        // Dynamically lock dialogue box position right above couple's heads without edge clipping
-        const boxWidth = dialogueBox.offsetWidth || 280;
-        const halfW = boxWidth / 2;
-
-        // Ensure boxLeft >= 16px and boxRight <= W - 16px
-        let targetX = coupleHeadX;
-        if (targetX - halfW < 16) {
-            targetX = 16 + halfW;
-        } else if (targetX + halfW > W - 16) {
-            targetX = W - 16 - halfW;
-        }
-
-        dialogueBox.style.left = `${targetX}px`;
-        dialogueBox.style.top = `${coupleHeadY - 14}px`;
-
-        // Position the speech bubble arrow tail precisely over couple's heads
-        const arrowOffset = coupleHeadX - (targetX - halfW);
-        const arrowPercent = Math.max(15, Math.min(85, (arrowOffset / boxWidth) * 100));
-        dialogueBox.style.setProperty('--arrow-left', `${arrowPercent}%`);
-    }
 
     // 1. Dialogue Phase (Starts after gentle pause when he sits down)
     if (isArrived && !conversationFinished) {
@@ -3439,36 +3685,37 @@ function updateDialogueAndLyrics(arrived) {
 
                 if (dialogueIndex < CONVERSATION.length) {
                     const item = CONVERSATION[dialogueIndex];
-                    dialogueSpeaker.textContent = item.speaker;
-                    dialogueText.textContent = item.text;
-                    dialogueBox.classList.remove('hidden');
+                    if (dialogueSpeaker) {
+                        if (item.speaker) {
+                            dialogueSpeaker.textContent = item.speaker;
+                            dialogueSpeaker.style.display = 'block';
+                        } else {
+                            dialogueSpeaker.textContent = '';
+                            dialogueSpeaker.style.display = 'none';
+                        }
+                    }
+                    if (dialogueText) dialogueText.textContent = item.text;
+                    if (dialogueBox) {
+                        dialogueBox.classList.remove('hidden');
+                        requestAnimationFrame(positionDialogueBox);
+                    }
                 } else {
                     // Conversation finished -> Dialogue box disappears!
                     conversationFinished = true;
-                    dialogueBox.classList.add('hidden');
+                    if (dialogueBox) dialogueBox.classList.add('hidden');
                 }
             }
         }
     }
 
-    // 2. Audio & Lyrics Delayed Phase (Starts 2s after dialogue disappears)
+    // 2. Audio & Lyrics Delayed Phase (Starts 1s after dialogue disappears)
     if (conversationFinished) {
         musicDelayTimer += 0.016;
 
         if (musicDelayTimer >= MUSIC_START_DELAY) {
             if (!musicStarted) {
                 musicStarted = true;
-                if (!bgMusic.src || bgMusic.src === '') {
-                    bgMusic.src = 'music.mp3';
-                }
-                bgMusic.loop = true;
-                bgMusic.muted = false;
-                bgMusic.volume = 1.0;
-                bgMusic.play().catch(e => {
-                    console.log("Audio play deferred for user interaction", e);
-                });
-                if (lyricsSub) lyricsSub.textContent = customMusicLoaded ? '🎶 Playing Your Uploaded Song' : '🌸 Relax & Enjoy the Melody';
-                if (lyricsBox && !lyricsCompleted) lyricsBox.classList.remove('hidden');
+                playSelectedMusic(currentMusicIndex, true);
             }
 
             const curTime = bgMusic.currentTime || (time % 35);
@@ -3499,15 +3746,19 @@ function updateDialogueAndLyrics(arrived) {
 }
 
 function startMusicAndLyrics() {
-    if (lyricsSub) lyricsSub.textContent = customMusicLoaded ? '🎶 Playing Your Uploaded Song' : '🌸 Relax & Enjoy the Melody';
+    const track = MUSIC_PLAYLIST[currentMusicIndex] || MUSIC_PLAYLIST[0];
+    if (lyricsSub) {
+        lyricsSub.textContent = `${track.icon} Playing: ${track.name}`;
+    }
     if (lyricsBox && !lyricsCompleted) lyricsBox.classList.remove('hidden');
 
     if (bgMusic) {
-        bgMusic.loop = true;
-        if (bgMusic.src) {
+        bgMusic.loop = false;
+        if (!bgMusic.src || bgMusic.src === '' || (bgMusic.src.endsWith('music.mp3') && track.src !== 'music.mp3')) {
+            bgMusic.src = track.src;
+        }
+        if (conversationFinished) {
             bgMusic.play().catch(() => { });
-        } else {
-            playGentleChime();
         }
     }
 }
@@ -3684,6 +3935,7 @@ function animate() {
 
 
         } else if (item.type === 'drape') {
+            if (!item.sprite) continue;
             const p = item.proj;
             const w = item.sprite.width * p.scale;
             const h = item.sprite.height * p.scale;
@@ -3693,6 +3945,7 @@ function animate() {
             tCtx.restore();
 
         } else if (item.type === 'cluster') {
+            if (!item.sprite) continue;
             const p = item.proj;
             const w = item.sprite.width * p.scale;
             const h = item.sprite.height * p.scale;
@@ -3810,19 +4063,36 @@ window.addEventListener('touchend', () => {
 });
 
 
-// Controls Bar Sky Dropdown Initialization & Event Listener
+// Controls Bar Music & Sky Dropdown Initialization
+if (musicSelect) {
+    musicSelect.innerHTML = '';
+    MUSIC_PLAYLIST.forEach((track, index) => {
+        const opt = document.createElement('option');
+        opt.value = index;
+        opt.textContent = track.name;
+        musicSelect.appendChild(opt);
+    });
+
+    musicSelect.addEventListener('change', (e) => {
+        const idx = parseInt(e.target.value, 10);
+        playSelectedMusic(idx);
+    });
+}
+
 if (skySelect) {
     skySelect.innerHTML = '';
     SKY_THEMES.forEach((theme, index) => {
         const opt = document.createElement('option');
         opt.value = index;
-        opt.textContent = `${theme.icon} ${theme.name}`;
+        opt.textContent = theme.name;
         skySelect.appendChild(opt);
     });
 
     skySelect.addEventListener('change', (e) => {
         currentSkyIndex = parseInt(e.target.value, 10);
-        if (selectIcon) selectIcon.textContent = SKY_THEMES[currentSkyIndex].icon;
+        if (skySelectIcon && SKY_THEMES[currentSkyIndex]) {
+            skySelectIcon.textContent = SKY_THEMES[currentSkyIndex].icon;
+        }
         preRenderSprites(); // Dynamic Cherry Tree & Petal Season Theme transformation!
         drawSky();
     });
@@ -3860,8 +4130,8 @@ function enterGarden(e) {
     if (scene) scene.classList.remove('hidden');
     if (overlay) overlay.classList.add('fade-out');
 
-    resize();
     preRenderSprites();
+    resize();
     build3DTree();
     init3DParticles();
     drawSky();

@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600&display=swap"
         rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
 </head>
@@ -66,9 +66,13 @@
 
         <!-- Controls Floating UI Bar -->
         <div id="controls-bar">
-            <input type="file" id="music-input" accept="audio/*" style="display:none" />
             <div class="select-wrapper">
-                <span class="select-icon">🌆</span>
+                <span class="select-icon" id="music-select-icon">🎵</span>
+                <select id="music-select" class="ctrl-select" title="Select Music Choice">
+                </select>
+            </div>
+            <div class="select-wrapper">
+                <span class="select-icon" id="sky-select-icon">🌆</span>
                 <select id="sky-select" class="ctrl-select" title="Select Sky Atmosphere Theme">
                 </select>
             </div>
@@ -89,11 +93,7 @@
         <audio id="bg-music" src="music.mp3" preload="auto"></audio>
     </div>
 
-
-
-
     <script src="java.js"></script>
 </body>
-
 
 </html>
